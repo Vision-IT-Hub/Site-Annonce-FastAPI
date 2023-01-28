@@ -1,18 +1,20 @@
-from ..serializers.category import ItemCategory , CreateCategory
 from fastapi import Depends
-from sqlalchemy.orm import Session
-from .database_settngs import get_db
-from ..models.category import Category
 from fastapi import HTTPException, status
+from sqlalchemy.orm import Session
+
+from ..settings.database_settngs import get_db
+from ..models.category import Category
+from ..serializers.category import ItemCategory, CreateCategory
 
 
-async def create_category(request:CreateCategory, db: Session = Depends(get_db))-> ItemCategory:
-    slug =  "-".join(request.category_name.split(' ')).lower()
-    new_category = Category(category_name=request.category_name, description=request.description, slug=slug )
+async def create_category(request: CreateCategory, db: Session = Depends(get_db)) -> ItemCategory:
+    slug = "-".join(request.category_name.split(' ')).lower()
+    new_category = Category(category_name=request.category_name, description=request.description, slug=slug)
     db.add(new_category)
     db.commit()
     db.refresh(new_category)
     return new_category
+
 
 async def destroy(id: int, db: Session):
     category = db.query(Category).filter(Category.id == id)
@@ -26,5 +28,5 @@ async def destroy(id: int, db: Session):
 
 
 async def get_all_categroy(db: Session):
-    category =  db.query(Category).all()
-    return category 
+    category = db.query(Category).all()
+    return category

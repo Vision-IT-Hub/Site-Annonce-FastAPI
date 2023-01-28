@@ -1,11 +1,10 @@
-from fastapi_contrib.serializers.common import Serializer
-from fastapi_contrib.serializers import openapi
-from ..models.articles import (Articles, Review)
+from ..models.articles import (Articles)
+
 
 def ArticleSerializer(article):
-   data_ = {
-             k: article[k] for k in Articles.schema()["required"]
-           }
-   data_["_id"] = str(article["_id"])
+    data_ = {
+        k: article[k] for k in Articles.schema()["required"]
+    }
+    data_["_id"] = str(article["_id"])
 
-   return data_
+    return data_

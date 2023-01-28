@@ -220,5 +220,11 @@ configs.json
 *media
 db.sqlite3
 public.pem
+private.pem
 
 deploy.sh
+alembic/
+alembic
+alembic.ini
+alembic.ini
+.alembic/

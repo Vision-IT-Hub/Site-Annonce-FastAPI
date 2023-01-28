@@ -1,17 +1,16 @@
-from typing import List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class ItemCategory(BaseModel):
-    id : int
-    category_name : str
-    description : str
-    slug : str 
+    id: int
+    category_name: str
+    description: str
+    slug: str
 
     class Config:
-        orm_mode=True 
+        orm_mode = True
+
 
 class CreateCategory(BaseModel):
-    category_name : str
-    description : str
-    
+    category_name: str
+    description: str

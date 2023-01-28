@@ -7,8 +7,26 @@
   
 #### 2) Install requirements:
     pip install -r requirements.txt
+    pip install 'fastapi-jwt-auth[asymmetric]'
+    pip install "passlib[bcrypt]"
 
-#### 3) Run server
+#### 3) Run migration
+```bash
+$ alembic init alembic
+```
+```bash
+$ alembic revision --autogenerate -m "Migration Tables"
+```
+
+#### 4) generate RSA Keys in settings/credentials folder
+```bash
+$ openssl genrsa -out private.pem 4096
+```
+```bash
+$ openssl rsa -in private.pem -pubout > public.pem
+```
+
+#### 5) Run server
 ```bash
 $ uvicorn main:app --reload
 ```
