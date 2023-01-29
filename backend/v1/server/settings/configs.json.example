@@ -2,5 +2,10 @@
   "JWT_PUBLIC_KEY_PATH": "project/settings/credentials/public.pem",
   "JWT_PRIVATE_KEY_PATH": "project/settings/credentials/private.pem",
    "URL_POSTGRES":  "postgresql://user:pass@localhost/db_name",
-   "JWT_ALGORITHM": ""
+   "JWT_ALGORITHM": "",
+   "USER_NAME": "",
+   "PASSWORD": "",
+   "HOST": "",
+   "DB_NAME": "",
+   "PORT":
 }

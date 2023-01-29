@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from ..jwt_decode import signJWT, JWTBearer
 from ..settings import utils
 from ..settings.database_settngs import get_db
-from ..queries_database.queries_userProfile import create_user, get_all_user_data
+from ..queries_database.queries_userProfile import create_user, get_all_user_data, get_current_user_by_token
 from ..models.userProfile import ResponseModel, User
 from ..serializers.userProfile import CreateUserSchema, LoginUserSchema
 
@@ -56,3 +56,11 @@ def logout(response: Response):
             )
 async def get_all_user(db: Session = Depends(get_db)):
     return await get_all_user_data(db)
+
+
+@router.get('/user/token/by_id/get', response_description="Get User By Id",
+            dependencies=[Depends(JWTBearer())],
+            responses={401: {"response": Depends(JWTBearer())}},
+            )
+async def get_user_by_token(token, db: Session = Depends(get_db)):
+    return await get_current_user_by_token(token, db)

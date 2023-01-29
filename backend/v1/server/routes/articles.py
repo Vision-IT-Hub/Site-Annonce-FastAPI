@@ -1,7 +1,14 @@
-from fastapi import APIRouter, Body, HTTPException, Depends
-from fastapi.encoders import jsonable_encoder
+import bson
+from bson.objectid import ObjectId
 
-from ..jwt_decode import JWTBearer
+from fastapi import APIRouter, Body, Depends
+from fastapi.encoders import jsonable_encoder
+from fastapi import HTTPException
+from sqlalchemy.orm import Session
+
+from ..settings.database_settngs import get_db
+from ..queries_database.get_user_by_id import get_user
+from ..jwt_decode import JWTBearer, decodeJWT
 from ..queries_database.queries_articles import (
     create_article,
     update_article,
@@ -9,9 +16,14 @@ from ..queries_database.queries_articles import (
     get_all_articles,
     get_article_by_id
 )
-from ..models.articles import Articles, ResponseModel, ErrorResponseModel
+from ..models.articles import Articles, ResponseModel, ErrorResponseModel, CreateArticles
 
 router = APIRouter()
+
+
+def dep(db: Session = Depends(get_db)):
+    db = db
+    return db
 
 
 @router.post(
@@ -20,9 +32,12 @@ router = APIRouter()
     dependencies=[Depends(JWTBearer())],
     responses={401: {"response": Depends(JWTBearer())}}
 )
-async def create_article_data(article: Articles = Body(...)):
+async def create_article_data(token: str = Depends(JWTBearer()), article: CreateArticles = Body()):
+    user = get_user(decodeJWT(token)["user_id"])
     article = jsonable_encoder(article)
+    article["user"] = user
     new_article = await create_article(article)
+
     return ResponseModel(new_article, "article added successfully.")
 
 
@@ -32,15 +47,24 @@ async def create_article_data(article: Articles = Body(...)):
     dependencies=[Depends(JWTBearer())],
     responses={401: {"response": Depends(JWTBearer())}}
 )
-async def delete_article_data(id: str):
-    deleted_article = await delete_article(id)
-    if deleted_article:
-        return ResponseModel(
-            "article with ID: {} removed".format(id), "article deleted successfully"
-        )
-    return ErrorResponseModel(
-        "An error occurred", 404, "article with id {0} doesn't exist".format(id)
-    )
+async def delete_article_data(id: str = ObjectId(), token: str = Depends(JWTBearer())):
+    current_user_id = decodeJWT(token)["user_id"]
+    try:
+        article = await get_article_by_id(id)
+        if article:
+            user_id_created_article = article["user"][0]["id"]
+
+            if current_user_id == user_id_created_article:
+                deleted_article = await delete_article(id)
+                if deleted_article:
+                    return ResponseModel(
+                        "article with ID: {} removed".format(id), "article deleted successfully"
+                    )
+                raise HTTPException(status_code=404, detail=" ID Article Not Found")
+            raise HTTPException(status_code=401, detail="Unauthorized access")
+        raise HTTPException(status_code=404, detail=" ID Article Not Found")
+    except bson.errors.InvalidId:
+        raise HTTPException(status_code=404, detail="ID Article Not Found")
 
 
 @router.put(

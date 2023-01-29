@@ -16,7 +16,6 @@ async def create_article(article_data: dict) -> dict:
 
 
 # Delete a articles from the queries_database
-# TODO: Il faut verifier le id entrant
 async def delete_article(id: str):
     article = await article_collection.find_one({"_id": ObjectId(id)})
     if article:
@@ -48,8 +47,10 @@ async def get_all_articles():
     return articles
 
 
+# TODO: Il faut verifier le id entrant
 # Get a student with a matching ID
 async def get_article_by_id(id: str) -> dict:
     article = await article_collection.find_one({"_id": ObjectId(id)})
     if article:
         return ArticleSerializer(article)
+    return {}

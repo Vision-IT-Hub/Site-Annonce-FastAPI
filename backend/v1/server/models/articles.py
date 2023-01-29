@@ -107,6 +107,30 @@ class Articles(BaseModel):
         }
 
 
+class CreateArticles(BaseModel):
+    article_name: str
+    image: str
+    brand: str
+    category: List[dict]  # get_category_by_id and get_list_field_category
+    description: str
+    rating: int
+    num_reviews: int
+    price: str
+    count_in_stock: int
+    sector: List[dict]
+    phone: str
+    video: str
+    condition: Conditon
+    article_address: str
+    is_features: bool
+    is_active: bool
+    type_transaction: TypeTransaction
+    create_at: datetime = datetime.now()
+    update_at: datetime = datetime.now()
+    slug: str
+    _id: ObjectId
+
+
 class Review(BaseModel):
     article: List[dict]  # get_article_by_id
     name: str
