@@ -17,6 +17,9 @@ $ alembic init alembic
 ```bash
 $ alembic revision --autogenerate -m "Migration Tables"
 ```
+```bash
+$ alembic upgrade head
+```
 
 #### 4) generate RSA Keys in settings/credentials folder
 ```bash
